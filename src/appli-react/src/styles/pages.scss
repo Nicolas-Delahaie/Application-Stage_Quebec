@@ -222,7 +222,19 @@
     flex-direction: column;
     align-items: center;
 
+    .filtres {
+        display: grid;
+        grid-template-columns: 1fr min-content;
+        align-items: center;
+
+        span {
+            margin-right: 10px;
+        }
+    }
+
     .container {
+        width: 80%;
+        min-width: 400px;
         display: flex;
         flex-direction: column;
 
@@ -308,7 +320,8 @@
             }
         }
     }
-    .details{
+
+    .details {
         margin: 2rem 2rem;
     }
 }
@@ -353,19 +366,20 @@
 }
 
 // 404
-#notFound{
+#notFound {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 55vh;
 
-    h2{
+    h2 {
         font-size: 3rem;
-        margin : 1rem 0;
+        margin: 1rem 0;
     }
-    p{
-        margin :0;
+
+    p {
+        margin: 0;
         font-size: 2rem;
     }
 

@@ -20,7 +20,7 @@ function Login() {
     const [isConnecting, setIsConnecting] = useState(null);
 
     const navigate = useNavigate();     //Pour naviguer entre les pages
-    const { estConnecte, connexion, deconnexion, apiAccess } = useContext(AppContext);
+    const { estConnecte, connexionFront, deconnexion, apiAccess } = useContext(AppContext);
 
 
     useEffect(() => {
@@ -62,7 +62,7 @@ function Login() {
             // -- Traitement de la reponse --
             if (rep.success) {
                 //Connexion pour 100 jours si on coche la case, sinon pour 24h
-                connexion(rep.datas.token, dureeSessionEnMin, rep.datas.type, rep.datas.estCoordo);
+                connexionFront(rep.datas.token, dureeSessionEnMin, rep.datas.type, rep.datas.estCoordo);
                 navigate(-1);
             }
             else {

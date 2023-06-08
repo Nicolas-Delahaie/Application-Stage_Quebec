@@ -41,7 +41,7 @@ export const AppProvider = ({ children }) => {
      * @brief Connecte l utilsisateur
      * @details Cree le cookie de tokken et met a jour la variable estConnecte 
      */
-    const connexion = (token, dureeSessionEnMin, userType, estCoordo) => {
+    const connexionFront = (token, dureeSessionEnMin, userType, estCoordo) => {
         const dureeSessionEnH = dureeSessionEnMin / 60;
         const dureeSessionEnJ = dureeSessionEnH / 24;
         Cookies.set("token", token, { expires: dureeSessionEnJ });
@@ -157,7 +157,7 @@ export const AppProvider = ({ children }) => {
 
 
     return (
-        <AppContext.Provider value={{ deconnexion, connexion, estConnecte, apiAccess, getType, getEstCoordo }}>
+        <AppContext.Provider value={{ deconnexion, connexionFront, estConnecte, apiAccess, getType, getEstCoordo }}>
             {children}
         </AppContext.Provider>
     );

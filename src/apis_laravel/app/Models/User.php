@@ -55,7 +55,8 @@ class User extends Authenticatable
         return $this->hasManyThrough(Scenario::class, Modification::class, 'utilisateur_id', 'id', 'id', 'scenario_id');
     }
 
-    public function departement(){
+    public function departement()
+    {
         return $this->belongsTo(Departement::class, 'departement_id');
     }
 

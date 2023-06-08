@@ -19,266 +19,205 @@ import { iconNonValide } from '../assets/svg/iconNonValide.js'
 
 
 function Scenarios() {
-    const { apiAccess, getType, getEstCoordo } = useContext(AppContext);
+    const { apiAccess, getType } = useContext(AppContext);
 
-    // const [erreurContexte, setErreurContexte] = useState(null);
-    // const [isLoadingContexte, setIsLoadingContexte] = useState(false);
-    // const [isLoadingScenarios, setIsLoadingScenarios] = useState(false);
-    // const [scenariosDetailles, setScenariosDetailles] = useState(null);
+    const [departements, setDepartements] = useState(null);
+    const [scenarios, setScenarios] = useState(null);
+    const [isLoadingScenarios, setIsLoadingScenarios] = useState(false);
+    const [erreurScenarios, setErreurScenarios] = useState(null);
 
-    const [estCoordo, setEstCoordo] = useState(false);
-    const [type, setType] = useState(false);
+    // Filtres
+    const [filtreDepartement, setFiltreDepartement] = useState(null);   //Valeur par defaut : ""
+    const [filtreEnAttente, setFiltreEnAttente] = useState(false);      //Valeur par defaut : false
+    const [filtreAnnee, setFiltreAnnee] = useState("");                 //Valeur par defaut : ""
+    const [filtreSession, setFiltreSession] = useState("");             //Valeur par defaut : ""
 
-    const [allScenarios, setAllScenarios] = useState(null);
-    const [scenariosEnAttente, setScenariosEnAttente] = useState(null);
-    const [scenariosModifies, setScenariosModifies] = useState(null);
-    const [mesScenarios, setMesScenarios] = useState(null);
-
-    const [currentPage, setCurrentPage] = useState(null);
+    const [type, setType] = useState(null);
 
     let urlImage = Calendrier;
     let icon = iconValide;
 
-
-    // const getScenarios = async () => {
-    //     // -- Recuperation des scenarios --
-    //     setIsLoadingContexte(true);
-    //     const rep = await apiAccess({
-    //         url: `http://localhost:8000/api/user/scenarios_crees`,
-    //         method: "get",
-    //     });
-    //     setIsLoadingContexte(false);
-
-    //     // -- Analyse --
-    //     if (rep.success) {
-    //         setScenariosDetailles([]);
-    //         console.log(rep);
-
-    //         var scenariosNonDetailles = rep.datas;
-
-    //         // -- Trie des scenarios (plus recents en premier et valides en premiers) --
-    //         scenariosNonDetailles.sort((a, b) => {
-    //             return b.annee - a.annee;
-    //         });
-    //         scenariosNonDetailles.sort((a, b) => {
-    //             return a.aEteValide - b.aEteValide;
-    //         });
-
-    //         // -- Recuperation des scenarios detailles un a un--
-    //         setIsLoadingScenarios(true);
-    //         for (let i = 0; i < rep.datas.length; i++) {
-    //             // -- Recuperation des scenarios detailles un a un--
-    //             const idScenario = scenariosNonDetailles[i].id;
-
-    //             const rep2 = await apiAccess({
-    //                 url: `http://localhost:8000/api/scenarios/${idScenario}/detaille`,
-    //                 method: "get",
-    //             });
-
-    //             // -- Analyse --
-    //             if (rep2.success) {
-    //                 // On ajoute le scenario aux autres scenarios
-    //                 setScenariosDetailles(scenariosDetailles => [...scenariosDetailles, rep2.datas]);
-    //             }
-    //             else {
-    //                 console.error("Erreur du chargement d'un des scenarios");
-    //             }
-    //         }
-    //         setIsLoadingScenarios(false);
-    //     }
-    //     else {
-    //         setErreurContexte(rep.erreur);
-    //     }
-    // };
-
-
+    // ---- CHARGEMENT DES DONNEES ----
+    /**
+     * @brief Récupère tous les departements pour les afficher dans les filtres
+     */
+    const getDepartements = async () => {
+        const rep = await apiAccess({
+            url: `http://localhost:8000/api/departements`,
+        });
+        if (rep.success) {
+            setDepartements(rep.datas);
+        }
+        else {
+            console.log(rep.erreur);
+        }
+    }
+    /**
+     * @brief Récupère tous les scenarios
+     */
     const getAllScenarios = async () => {
+        setIsLoadingScenarios(true);
         const rep = await apiAccess({
             url: `http://localhost:8000/api/scenarios_detailles`,
         });
+        setIsLoadingScenarios(false);
 
         if (rep.success) {
-            setAllScenarios(rep.datas);
+            setScenarios(rep.datas);
+        }
+        else {
+            setErreurScenarios(rep.erreur);
         }
     }
-    const getScenariosEnAttente = async () => {
-        const rep = await apiAccess({
-            url: `http://localhost:8000/api/scenarios_en_attente`,
-        });
-
-        if (rep.success) {
-            setScenariosEnAttente(rep.datas);
-        }
-    }
-    const getScenariosModifies = async () => {
-        const rep = await apiAccess({
-            url: `http://localhost:8000/api/user/scenarios_modifies`,
-        });
-
-        if (rep.success) {
-            setScenariosModifies(rep.datas);
-        }
-    }
+    /**
+     * @brief Récupère les scenarios du departement de l'utilisateur
+     */
     const getMesScenarios = async () => {
+        setIsLoadingScenarios(true);
         const rep = await apiAccess({
-            url: `http://localhost:8000/api/user/scenarios`,
+            url: `http://localhost:8000/api/user/departement/scenarios_detailles`,
         });
+        setIsLoadingScenarios(false);
 
         if (rep.success) {
-            setMesScenarios(rep.datas);
+            setScenarios(rep.datas);
+        }
+        else {
+            if (rep.statusCode === 404) {
+                setErreurScenarios("Vous n'avez pas de departement");
+            }
+            else {
+                setErreurScenarios(rep.erreur);
+            }
         }
     }
+
 
     useEffect(() => {
-        switch (getType()) {
-            case "administrateur":
-                /* ---- ADMINISTRATEUR ---- */
-                // Definition du type et de la page a afficher
-                setType("administrateur");
-                setCurrentPage("allScenarios");
+        const type = getType();
+        setType(type);
 
-                // Chargement des donnees
-                getAllScenarios();
-                break;
-
-            case "responsable":
-                /* ---- RESPONSABLE ---- */
-                // Definition du type et de la page a afficher
-                setType("responsable");
-                setCurrentPage("allScenarios");
-
-                // Chargement des donnees
-                getAllScenarios();
-                getScenariosEnAttente();
-                getScenariosModifies();
-                break;
-
-            case "professeur":
-                if (getEstCoordo()) {
-                    /* ---- PROFESSEUR (COORDO) ---- */
-                    // Definition du type et de la page a afficher
-                    setType("professeur");
-                    setEstCoordo(true);
-                    setCurrentPage("scenariosModifies");
-
-                    // Chargement des donnees
-                    getMesScenarios();
-                }
-                else {
-                    /* ---- PROFESSEUR (NON COORDO) ---- */
-                    // Definition du type et de la page a afficher
-                    setType("professeur");
-                    setCurrentPage("mesScenarios");
-
-                    // Chargement des donnees
-                    getMesScenarios();
-                }
-                break;
-
-            default:
-                break;
+        // Chargement des données en fonction de son type
+        if (type === "administrateur" || type === "responsable") {
+            getAllScenarios();
+            getDepartements();
         }
-    }, [])
-
-    const renderScenario = (scenario) => {
-        return <CarteHorizontale
-            key={scenario.id}
-            urlImage={scenario.aEteValide ? Valider : Calendrier}
-            titre={"Département " + scenario.departement.nom}
-            lien={`/scenarios/${scenario.id}`}>
-            <p>Coordonnateur : {scenario.proprietaire.prenom} {scenario.proprietaire.nom}<br />
-                Année :{scenario.annee}<br />
-                Dernière modification : {scenario.updated_at}<br />
-                Date de création : {scenario.created_at}<br />
-            </p>
-            <div className="zoneValidation">
-                <h3>Validé par le responsable : </h3>
-                <img src={scenario.aEteValide ? iconValide : iconNonValide} className="icone" />
-            </div>
-        </CarteHorizontale>
-    }
+        else {
+            getMesScenarios();
+        }
+    }, []);
 
     /**
-     * @brief Renvoie le jsx de la page en fonction de la page a afficher 
-     * @param {number} page a afficher : 1 = tous les scenarios, 2 = scenarios en attente, 3 = scenarios modifies, 4 = mes scenarios 
-     * @returns jsx de la page
+     * @brief Retourne le nom de la session en fonction de son numero
+     * @param {int} session Numero de la session
      */
-    const renderPage = (page) => {
-        switch (page) {
-            case "allScenarios":
-                return <>
-                    <h1>Tous les scenarios</h1>
-                    <div className="container">
-                        {allScenarios && allScenarios.length === 0 && <h2>Vous n'avez aucun scénario</h2>}
-                        {/* {isLoadingScenarios && <Loader />} */}
-                        {allScenarios && allScenarios.map(scenario => (renderScenario(scenario)))}
-                    </div>
-                </>
-
-            case "scenariosEnAttente":
-                return <>
-                    <h1>Scenarios en attente</h1>
-                    <div className="container">
-                        {scenariosEnAttente && scenariosEnAttente.length === 0 && <h2>Vous n'avez aucun scénario en attente</h2>}
-                        {/* {isLoadingScenarios && <Loader />} */}
-                        {scenariosEnAttente && scenariosEnAttente.map(scenario => (renderScenario(scenario)))}
-                    </div>
-                </>
-
-            case "scenariosModifies":
-                return <>
-                    <h1>Scenarios modifiés</h1>
-                    <div className="container">
-                        {scenariosModifies && scenariosModifies.length === 0 && <h2>Vous n'avez modifié aucun scénario</h2>}
-                        {/* {isLoadingScenarios && <Loader />} */}
-                        {scenariosModifies && scenariosModifies.map(scenario => (renderScenario(scenario)))}
-                    </div>
-                </>
-
-            case "mesScenarios":
-                return <>
-                    <h1>Mes Scenarios</h1>
-                    <div className="container">
-                        {mesScenarios && mesScenarios.length === 0 && <h2>Aucun scénario ne vous affecte</h2>}
-                        {/* {isLoadingScenarios && <Loader />} */}
-                        {mesScenarios && mesScenarios.map(scenario => (renderScenario(scenario)))}
-                    </div>
-                </>
-
-            default:
-                // Rien a afficher
-                break;
+    const nomSession = (session) => {
+        switch (session) {
+            case 1:
+                return "Hiver";
+            case 2:
+                return "Printemps";
+            case 3:
+                return "Été";
         }
+    };
+
+
+    // ---- COMPOSANTS JSX ---- 
+    /**
+     * @brief Renvoie le JSX des scenarios 
+     * @param {Array} scenarios
+     */
+    const renderScenarios = (scenarios) => {
+        var scenariosAAfficher = scenarios;
+
+        // Filtrage des scenarios en fonction des criteres
+        if (filtreDepartement) {
+            // On veut afficher uniquement le departement selectionne
+            scenariosAAfficher = scenariosAAfficher.filter(scenario => scenario.departement.id == filtreDepartement);
+        }
+        if (filtreAnnee) {
+            // On veut afficher uniquement les scenarios de l'annee selectionnee
+            scenariosAAfficher = scenariosAAfficher.filter(scenario => scenario.annee == filtreAnnee);
+        }
+        if (filtreSession) {
+            // On veut afficher uniquement les scenarios de la session selectionnee
+            scenariosAAfficher = scenariosAAfficher.filter(scenario => scenario.session == filtreSession);
+        }
+        if (filtreEnAttente) {
+            // On ne veut afficher que les departements qui n ont pas ete validés
+            scenariosAAfficher = scenariosAAfficher.filter(scenario => !scenario.aEteValide);
+        }
+
+        // Affichage des scenarios
+        return <div className="container">
+            {scenariosAAfficher.length === 0 && <h3>Aucun scénario n'a été trouvé</h3>}
+            {scenariosAAfficher.map(scenario =>
+                <CarteHorizontale
+                    key={scenario.id}
+                    urlImage={scenario.aEteValide ? Valider : Calendrier}
+                    titre={"Département " + scenario.departement.nom}
+                    lien={`/scenarios/${scenario.id}`}>
+                    <span>
+                        Session : {nomSession(scenario.session)} {scenario.annee}<br />
+                        Dernière modification : {scenario.updated_at}<br />
+                        Date de création : {scenario.created_at}<br />
+                        {scenario.departement.coordonnateur && <>
+                            Coordonnateur : {scenario.departement.coordonnateur.prenom} {scenario.departement.coordonnateur.nom}<br />
+                        </>}
+                    </span>
+                    <div className="zoneValidation">
+                        <h3>Validé par le responsable : </h3>
+                        <img src={scenario.aEteValide ? iconValide : iconNonValide} className="icone" />
+                    </div>
+                </CarteHorizontale>
+            )}
+        </div>
+    }
+    /**
+     * @brief Renvoie le JSX des filtres
+     */
+    const renderFiltres = () => {
+        return <div className="filtres">
+            <span>Departement</span>
+            <select name="departements" onChange={e => setFiltreDepartement(e.target.value)}>
+                <option value={""}>Tous</option>
+                {departements &&
+                    departements.map(departement =>
+                        <option key={departement.id} value={departement.id}>{departement.nom}</option>
+                    )
+                }
+            </select>
+
+            <span>Année</span>
+            <input type="number" name="annee" value={filtreAnnee} onChange={e => setFiltreAnnee(e.target.value)} placeholder="Toutes" />
+
+            <span>Session</span>
+            <select name="departements" onChange={e => setFiltreSession(e.target.value)}>
+                <option value={""}>Toutes</option>
+                <option value={1}>{nomSession(1)}</option>
+                <option value={2}>{nomSession(2)}</option>
+                <option value={3}>{nomSession(3)}</option>
+            </select>
+
+            <span>En attentes</span>
+            <input type="checkbox" onChange={e => setFiltreEnAttente(e.target.checked)} />
+        </div>
     }
 
-
-    return <div className='page' id="scenarios">
-        {type === "administrateur" &&
-            <nav>
-                <button className='boutonSeul' onClick={() => setCurrentPage("allScenarios")}>Tous les scenarios</button>
-            </nav>
+    return <div id="scenarios">
+        {type === "administrateur" || type === "responsable" ?
+            <>
+                <h1>Tous les scénarios</h1>
+                <h2>Filtres</h2>
+                {renderFiltres()}
+            </>
+            :
+            <h1>Scenarios de mon departement</h1>
         }
-        {type === "responsable" &&
-            <nav>
-                <button className='premierBouton' onClick={() => setCurrentPage("scenariosEnAttente")}>Scenarios en attente</button>
-                <button onClick={() => setCurrentPage("scenariosModifies")}>Scenarios modifiés</button>
-                <button className='dernierBouton' onClick={() => setCurrentPage("allScenarios")}>Tous les scenarios</button>
-            </nav>
-        }
-        {type === "professeur" && estCoordo &&
-            <nav>
-                <button className='premierBouton' onClick={() => setCurrentPage("scenariosModifies")}>Scenarios modifiés</button>
-                <button className='dernierBouton' onClick={() => setCurrentPage("mesScenarios")}>Mes scénarios</button>
-            </nav>
-        }
-        {type === "professeur" && !estCoordo &&
-            <nav>
-                <button onClick={() => setCurrentPage("mesScenarios")}>Mes scénarios</button>
-            </nav>
-        }
-
-        {renderPage(currentPage)}
-
+        {isLoadingScenarios && <Loader />}
+        {erreurScenarios && <h3>Erreur : {erreurScenarios}</h3>}
+        {scenarios && renderScenarios(scenarios)}
     </div>
 }
 

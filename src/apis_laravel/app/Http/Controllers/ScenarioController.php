@@ -19,11 +19,13 @@ class ScenarioController extends Controller
     public function indexDetaille()
     {
         return Scenario::with([
-            "proprietaire" => function ($query) {
-                $query->select('id', 'nom', 'prenom');
-            },
             "departement" => function ($query) {
-                $query->select('id', 'nom');
+                $query->with([
+                    "coordonnateur" => function ($query) {
+                        $query->select('id', 'nom', 'prenom');
+                    }
+                ])
+                    ->select('id', 'nom', 'coordonnateur_id');
             }
         ])
             ->get()

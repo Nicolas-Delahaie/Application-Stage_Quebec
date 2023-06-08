@@ -28,24 +28,6 @@ class UserController extends Controller
 
         return $users;
     }
-    /**
-     * @brief Renvoie les scenarios d un utilisateur de maniere detaillee
-     * @pre Condition Avoir un token valide lie a un utilisateur 
-     * @return Scenario[]
-     */
-    public function showUserScenariosCrees()
-    {
-        return Auth::user()->scenariosCrees;
-    }
-    /**
-     * @brief Renvoie tous les scenarios modifies par un utilisateur de maniere detaillee
-     * @pre Condition Avoir un token valide lie a un utilisateur 
-     * @return Scenario[]
-     */
-    public function showUserScenariosModifies()
-    {
-        return Auth::user()->scenariosModifies;
-    }
     public function showLiberations($id)
     {
         return User::findOrFail($id)->liberations;
@@ -58,6 +40,31 @@ class UserController extends Controller
     public function showUserDetails()
     {
         return Auth::user()->load(["type", "liberations", "coursEnseignes"]);
+    }
+    /**
+     * @brief Renvoie les scenarios d un utilisateur de maniere detaillee
+     * @pre Condition Avoir un token valide lie a un utilisateur
+     * @return Scenario[]
+     */
+    public function showDepartementScenariosDetailles()
+    {
+        $departement = Auth::user()->departement;
+
+        if ($departement === null) {
+            return response(['message' => "Utilisateur n'a pas de departement"], 404);
+        }
+
+        return $departement->scenarios()
+            ->with([
+                "departement" => function ($query) {
+                    $query->select('id', 'nom', 'coordonnateur_id');
+                },
+            ])
+            ->get()
+            ->sortByDesc("updated_at")
+            ->sortByDesc("annee")
+            ->sortBy("aEteValide")
+            ->values();
     }
 
     // ----- PUT -----
@@ -128,7 +135,12 @@ class UserController extends Controller
             $token->accessToken->expires_at = $date_expiration;
             $token->accessToken->save();
 
-            return response(['token' => $token->plainTextToken, 'type' => $user->type->nom, 'estCoordo' => $user->estCoordo, 'message' => 'Utilisateur bien authentifié'], 299);
+            return response([
+                'token' => $token->plainTextToken,
+                'type' => $user->type->nom,
+                'estCoordo' => $user->estCoordo,
+                'message' => 'Utilisateur bien authentifié'
+            ], 299);
         } else {
             // Mauvais identifiants
             return response(['message' => 'Mot de passe ou mail incorrect'], 401);
