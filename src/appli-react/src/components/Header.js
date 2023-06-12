@@ -25,13 +25,14 @@ function Header() {
                     <>
                         <Link className="LienSouligne" to="/scenarios">Scénarios</Link>
                         <Link className="LienSouligne" to="/departements/">Départements</Link>
-                        <Link className="LienSouligne" to="profil">Mon profil</Link>
+                        <Link className="LienSouligne" to="/liberations">Libérations</Link>
                     </>
                 }
                 {estConnecte && type === "responsable" &&
                     <>
                         <Link className="LienSouligne" to="/scenarios">Scénarios</Link>
                         <Link className="LienSouligne" to="/departements/">Départements</Link>
+                        <Link className="LienSouligne" to="/liberations">Libérations</Link>
                         <Link className="LienSouligne" to="profil">Mon profil</Link>
                     </>
                 }
@@ -47,7 +48,7 @@ function Header() {
                 <button onClick={() => deconnexion()}>Se déconnecter</button>
                 :
                 <button>
-                <Link className="lien" to="/login"> Se connecter</Link>
+                    <Link className="lien" to="/login"> Se connecter</Link>
                 </button>
             }
         </header>
