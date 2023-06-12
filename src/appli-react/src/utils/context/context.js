@@ -9,27 +9,15 @@ import { useNavigate } from 'react-router-dom'; //Pour naviguer entre les pages
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-    /**
-     * @brief UseState a utiliser sur des elements graphiques dynamiques en fonction de si l utilisateur est connecte (header par exemple)
-     * @details Mise à jour a chaque recuperation du token
-     */
-    const [estConnecte, setEstConnecte] = useState(Cookies.get('token') !== undefined);
-    const navigate = useNavigate();     //Pour naviguer entre les pages
-    const errorMessages = {
-        400: "Requete mal formée",
-        401: "Authentification necessaire",
-        403: "Vous ne pouvez pas accéder à ces données",
-        404: "La ressource n'existe pas",
-        422: "Mauvais format de reponse",
-        503: "Service indisponible (surcharge ou maintenance)",
-        default: "Erreur de serveur"
-    }
-
+    // --- COOKIES ---
     /**
      * @brief Retourne le token de l'utilisateur, undefined s il n est pas connecté
      * @details Met egalement a jour la variable estConnecte 
      * @returns string, undefined
      */
+    const getToken = () => {
+        return Cookies.get('token');
+    }
     const getType = () => {
         return Cookies.get('userType');
     }
@@ -37,6 +25,11 @@ export const AppProvider = ({ children }) => {
         return Cookies.get('estCoordo');
     }
 
+    // --- VARIABLES GLOBALES ---
+    const [estConnecte, setEstConnecte] = useState(getToken() !== undefined);
+
+
+    // --- CONNEXION / DECONNEXION ---
     /**
      * @brief Connecte l utilsisateur
      * @details Cree le cookie de tokken et met a jour la variable estConnecte 
@@ -49,27 +42,29 @@ export const AppProvider = ({ children }) => {
         Cookies.set("estCoordo", estCoordo, { expires: dureeSessionEnJ });
         setEstConnecte(true);
     }
-    /**
-     * @brief Deconnecte l utilsisateur
-     * @details Supprime le cookie de tokken et met a jour la variable estConnecte 
-     */
+    const navigate = useNavigate();     //Pour naviguer entre les pages
     const deconnexionFront = () => {
         Cookies.remove('token');
         Cookies.remove('userType');
         setEstConnecte(false);
-        console.log("DECONNEXION FRONT");
         navigate("/");
     }
+    /**
+     * @brief Deconnecte l utilisateur du front et du back
+     * @details Supprime les cookies, met a jour la variable estConnecte et redirige vers la page de connexion, tout en rendant invalide le token en base de données
+     */
     const deconnexion = async () => {
-        // Dexonnexion front
-        deconnexionFront();
         // Deconnexion back
-        const rep = await apiAccess({
+        await apiAccess({
             url: "http://localhost:8000/api/logout",
             method: "post",
         });
+        // Dexonnexion front
+        deconnexionFront();
     }
 
+
+    // --- FONCTIONS UTILES ---
     /**
      * @brief Permet d'envoyer une requête à une API avec vérification de l'authentification.
      * @details Cette fonction envoie une requête à une API en utilisant l'URL spécifiée et effectue des vérifications d'authentification.
@@ -90,9 +85,20 @@ export const AppProvider = ({ children }) => {
         body = undefined,
         needAuth = true
     }) => {
+        // -- CONSTANTES --
+        const errorMessages = {
+            400: "Requete mal formée",
+            401: "Authentification necessaire",
+            403: "Vous ne pouvez pas accéder à ces données",
+            404: "La ressource n'existe pas",
+            422: "Mauvais format de reponse",
+            503: "Service indisponible (surcharge ou maintenance)",
+            default: "Erreur de serveur"
+        }
+
         // -- PRE-TRAITEMENTS --
         // Verificaton de l authentification
-        const token = Cookies.get('token');
+        const token = getToken();
         console.log(token);
         if (needAuth && !token) {
             // Aucun utilisateur connecte
@@ -105,12 +111,6 @@ export const AppProvider = ({ children }) => {
             };
         }
 
-        // Conversion du body en string
-        if (body) {
-            // On convertit le body en string s il y en a un
-            body = JSON.stringify(body);
-        }
-
         // -- TRAITEMENT --
         console.log(url);
         const res = await fetch(url, {
@@ -118,25 +118,25 @@ export const AppProvider = ({ children }) => {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                "Authorization": needAuth ? `Bearer ${token}` : undefined,
+                "Authorization": needAuth && `Bearer ${token}`,
             },
-            body: body
+            body: body && JSON.stringify(body),
         })
             .catch(err => {
                 return {
                     success: false,
-                    erreur: err
+                    statusCode: 500,
+                    erreur: errorMessages.default
                 }
             })
 
         // -- RETOUR --
         if (res.ok) {
             // La requete a reussi
-
             return {
                 success: true,
                 statusCode: res.status,
-                datas: res.status === 204 ? {} : await res.json(),
+                datas: res.status === 204 ? {} : await res.json(),      // On ne fait pas json() s il n y a pas de contenu
             }
         }
         else {
@@ -153,7 +153,6 @@ export const AppProvider = ({ children }) => {
             }
         }
     }
-
 
 
     return (
