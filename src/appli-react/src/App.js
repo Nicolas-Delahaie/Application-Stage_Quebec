@@ -10,19 +10,19 @@ import './styles/index.scss';
 import './styles/pages.scss';
 import './styles/composants.scss';
 
-/* Import des pages */
+/* Import des composants */
+import Header from "./components/Header";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Scenarios from "./pages/scenarios";
+import Scenarios from "./pages/scenario/Scenarios";
 import DetailsScenario from "./pages/scenario/DetailsScenario";
-import Departements from "./pages/Departements";
-import DetailsDepartement from "./pages/DetailsDepartement";
+import Departements from "./pages/departement/Departements";
+import DetailsDepartement from "./pages/departement/DetailsDepartement";
 import Profil from "./pages/Profil";
+import Profils from "./pages/Profils";
 import Liberations from "./pages/Liberations";
 import NotFound from "./pages/NotFound";
-
-/* Import des Layout */
-import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 
 function App() {
@@ -39,9 +39,11 @@ function App() {
             <Route exact path="/departements" element={<Departements />} />
             <Route exact path="/departements/:id" element={<DetailsDepartement />} />
             <Route exact path="/profil" element={<Profil />} />
+            <Route exact path="/profils/:id" element={<Profils />} />
             <Route exact path="/liberations" element={<Liberations />} />
             <Route path="*" element={<NotFound />} />
           </Routes >
+          <Footer />
         </AppProvider >
       </BrowserRouter >
     </div >

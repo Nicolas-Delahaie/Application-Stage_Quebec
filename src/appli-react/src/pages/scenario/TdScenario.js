@@ -1,14 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
-import { AppContext } from '../utils/context/context';
+import { AppContext } from '../../utils/context/context';
 import { useContext } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 
 export function TdScenario({ indexCours, indexProfesseur, nbGroupes, TbCours, TbProfesseurs, TbRepartition, fonctionUpdateRepartition }) {
-    const [estClicker, setEstClicker] = useState(false);        //Permet de savoir si l'utilisateur a cliqué sur la cellule
-    const [resultatUpdate, setResultatUpdate] = useState(0);    //Variable qui contient le résultat de la modification de la répartition
-    const inputRef = useRef(null);                              //Référence à l'input
-    const { apiAccess } = useContext(AppContext);               //Permet d'accéder à l'API
+    const [estClicker, setEstClicker] = useState(false);                //Permet de savoir si l'utilisateur a cliqué sur la cellule
+    const [resultatUpdate, setResultatUpdate] = useState(0);            //Variable qui contient le résultat de la modification de la répartition
+    const inputRef = useRef(null);                                      //Référence à l'input
+    const { apiAccess } = useContext(AppContext);                       //Permet d'accéder à l'API
+    const [nbGroupesInput, setNbGroupesInput] = useState(nbGroupes);    //Nombre de groupes dans l'input
 
+    console.log('nbGroupesInput : ' + nbGroupesInput);
     /**
      * Fonction qui permet de savoir si l'utilisateur a cliqué sur la cellule
      */
@@ -155,28 +157,56 @@ export function TdScenario({ indexCours, indexProfesseur, nbGroupes, TbCours, Tb
      * @param {*} e Evènement
      * @param {*} nbGroupes Nombre de groupes
      */
-    const entreTest = (e, nbGroupes) => {
+    const entreTest = (e, nbGroupesInput, nbGroupes) => {
+        console.log(e)
         if (e.key === 'Enter') {
-            // On récupère la valeur de l'input
-            const value = Number(e.target.value);
             // On change l'état de la cellule
             setEstClicker(!estClicker);
             // Si la valeur est supérieur à 0 et différente ou égale du nombre de groupes alors on modifie la répartition
-            if (value >= 1 && value !== nbGroupes) {
-                updateRepartition(value);
+            if (nbGroupesInput >= 1 && nbGroupesInput !== nbGroupes && nbGroupesInput <= 10) {
+                updateRepartition(nbGroupesInput);
             }
             // Sinon si la valeur est égale à 0 alors on supprime la répartition
-            else if (value === 0) {
-                deleteRepartition();
+            else if (nbGroupesInput === 0 || nbGroupesInput === null) {
+                toast.error("Erreur : il faut un nombre de groupes supérieur à 0");
+                // deleteRepartition();
+            }
+            else if (nbGroupesInput === nbGroupes) {
+                toast.error("Erreur : Vous n'avez pas modifié le nombre de groupes");
+            }
+            else if (nbGroupesInput < 0) {
+                toast.error("Erreur : Le nombre de groupes ne peut pas être négatif");
+            }
+            else if (nbGroupesInput > 10) {
+                toast.error("Erreur : Vous avez un nombre de groupes trop important");
             }
         }
+        else {
+            if (e.key === 'Escape') {
+                setEstClicker(!estClicker);
+            }
+        }
+
     };
 
     return (
         estClicker ? (
             <td className='tdScenario' onClick={clickTest}>
                 <Toaster />
-                <input ref={inputRef} type="number" placeholder={nbGroupes} onKeyDown={(e) => entreTest(e, nbGroupes)} />
+                <input
+                    ref={inputRef}
+                    type="number"
+                    value={nbGroupesInput}
+                    onChange={(e) => {
+                        if (e.target.value != 0) {
+                            setNbGroupesInput(Number(e.target.value));
+                        }
+                        else {
+                            setNbGroupesInput(null);
+                        }
+                    }}
+                    onKeyDown={(e) => entreTest(e, nbGroupesInput, nbGroupes)}
+                />
             </td>
         ) : (
             <td onClick={clickTest}>

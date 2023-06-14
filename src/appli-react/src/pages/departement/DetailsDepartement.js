@@ -3,9 +3,10 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 
 // Composants
-import { AppContext } from '../utils/context/context';
-import Loader from '../components/Loader.js';
-import CarteCours from "../components/CarteCours";
+import { AppContext } from '../../utils/context/context';
+import Loader from '../../components/Loader.js';
+import CarteCours from "./CarteCours";
+import NomUser from "../../components/NomUser"
 
 
 /* ----------------------------------- DOM ---------------------------------- */
@@ -101,22 +102,16 @@ function DetailsDepartement() {
 
 
     return (
-        <div className="page departement">
-            {loadingDepartement &&
-                <div className="loading">
-                    <Loader />
-                </div>}
-            {erreurDepartement && <h1>Erreur : {erreurDepartement}</h1>}
+        <div className={`page departement ${loadingDepartement ? "centrer" : ""}`}>
+            {loadingDepartement && <Loader />}
+            {erreurDepartement && <h2>Erreur : {erreurDepartement}</h2>}
             {departement &&
                 <>
                     <h1>{departement.nom}</h1>
                     <div className="container">
-                        {loadingCoordo &&
-                            <div>
-                                <Loader />
-                            </div>}
+                        {loadingCoordo && <Loader />}
                         {erreurCoordo && <h1>Erreur : {erreurCoordo}</h1>}
-                        {coordo && <p>Coordonné par : {coordo.prenom} {coordo.nom}</p>}
+                        {coordo && <p>Coordonné par : <NomUser user={coordo} cliquable="true" /></p>}
 
                         <h2>Cours proposés par le département </h2>
                         {loadingCoursProposes && <Loader />}
@@ -142,7 +137,7 @@ function DetailsDepartement() {
                     </div>
                 </>
             }
-        </div>
+        </div >
     )
 }
 

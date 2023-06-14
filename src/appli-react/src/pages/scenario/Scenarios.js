@@ -3,18 +3,19 @@
  */
 // Librairies
 import { useState, useEffect, useContext } from 'react'
-import { AppContext } from '../utils/context/context';
+import { AppContext } from '../../utils/context/context';
 
 // Composants
-import CarteHorizontale from '../components/CarteHorizontale';
-import Loader from '../components/Loader.js';
+import CarteHorizontale from '../../components/CarteHorizontale';
+import Loader from '../../components/Loader.js';
+import NomUser from '../../components/NomUser.js';
 
 // Images
-import Valider from '../assets/images/Scenarios/Valider.svg'
-import Calendrier from '../assets/images/Scenarios/Calendrier.svg'
+import Valider from '../../assets/images/Scenarios/Valider.svg'
+import Calendrier from '../../assets/images/Scenarios/Calendrier.svg'
 
-import { iconValide } from '../assets/svg/iconValide.js'
-import { iconNonValide } from '../assets/svg/iconNonValide.js'
+import { iconValide } from '../../assets/svg/iconValide.js'
+import { iconNonValide } from '../../assets/svg/iconNonValide.js'
 
 
 
@@ -163,7 +164,7 @@ function Scenarios() {
                         Dernière modification : {scenario.updated_at}<br />
                         Date de création : {scenario.created_at}<br />
                         {scenario.departement.coordonnateur && <>
-                            Coordonnateur : {scenario.departement.coordonnateur.prenom} {scenario.departement.coordonnateur.nom}<br />
+                            Coordonnateur : <NomUser user={scenario.departement.coordonnateur} /><br />
                         </>}
                     </span>
                     <div className="zoneValidation">
@@ -200,24 +201,29 @@ function Scenarios() {
                 <option value={3}>{nomSession(3)}</option>
             </select>
 
-            <span>En attentes</span>
+            <span>En attente</span>
             <input type="checkbox" onChange={e => setFiltreEnAttente(e.target.checked)} />
         </div>
     }
 
-    return <div id="scenarios">
-        {type === "administrateur" || type === "responsable" ?
-            <>
-                <h1>Tous les scénarios</h1>
-                <h2>Filtres</h2>
-                {renderFiltres()}
-            </>
-            :
-            <h1>Scenarios de mon departement</h1>
-        }
+    return <div id="scenarios" className={`page ${isLoadingScenarios ? "centrer" : ""}`}>
         {isLoadingScenarios && <Loader />}
-        {erreurScenarios && <h3>Erreur : {erreurScenarios}</h3>}
-        {scenarios && renderScenarios(scenarios)}
+        {erreurScenarios && <h2>Erreur : {erreurScenarios}</h2>}
+        {scenarios &&
+            <>
+                {(type === "administrateur" || type === "responsable") &&
+                    <>
+                        <h1>Tous les scénarios</h1>
+                        <h2>Filtres</h2>
+                        {renderFiltres()}
+                    </>
+                }
+                {type === "professeur" &&
+                    <h1>Scenarios de mon departement</h1>
+                }
+                {renderScenarios(scenarios)}
+            </>
+        }
     </div>
 }
 

@@ -40,8 +40,7 @@ body {
 
 .App {
     display: grid;
-    grid-template-rows: 10vh 1fr 5vh;
-    min-height: 100vh;
+    grid-template-rows: 10vh 1fr 10vh;
 }
 
 
@@ -91,11 +90,6 @@ input[type="submit"] {
     @extend .ModeleBouton;
 }
 
-Link {
-    @extend .ModeleBouton;
-    text-decoration: none;
-}
-
 // -- INPUTS -- //
 input[type="text"],
 input[type="number"],
@@ -108,6 +102,14 @@ input[type="email"] {
 select {
     @extend .ModeleInputsHorizontaux;
     cursor: pointer;
+}
+
+a{
+    text-decoration: none;
+    
+    &:hover{
+        cursor: pointer;
+    }
 }
 
 /* --------------------------------------------- */
@@ -126,11 +128,12 @@ select {
     width: fit-content;
     transition: all 0.2s ease-in-out;
     border: none;
-
+    white-space: nowrap;
 
     &:hover {
         box-shadow: 0px 5px 5px 0px var(--gris);
         transform: translateY(-2px);
+        cursor: pointer;
     }
 
     &:active {
@@ -163,15 +166,10 @@ select {
     }
 }
 
-/* --------------------------------------------- */
-/*             CLASSES PERSONNALISEES            */
-/* --------------------------------------------- */
-// Classe utilisables directement dans le html
-.lien{
+.ModeleLien {
     text-decoration: none;
     color: var(--bleu-fonce);
     font-weight: bold;
-    transition: 0.1s ease-in-out;
     margin: 0rem 0.5rem;
     margin: 0.5rem;
 
@@ -180,9 +178,19 @@ select {
     }
 }
 
+/* --------------------------------------------- */
+/*             CLASSES PERSONNALISEES            */
+/* --------------------------------------------- */
+// Classe utilisables directement dans le html
+.lienBtn {
+    @extend .ModeleLien;
+    @extend .ModeleBouton;
+}
+
 .LienSouligne {
-    @extend .lien;
+    @extend .ModeleLien;
     font-size: 1.2rem;
+
     &:after {
         content: "";
         display: block;
@@ -197,7 +205,11 @@ select {
             width: 100%;
         }
     }
+}
 
+.lienSimple {
+    @extend .ModeleLien;
+    margin: 0%;
 }
 
 
@@ -207,11 +219,19 @@ select {
 /* --------------------------------------------- */
 // Classe utilisables directement dans le html
 // Tout ce qui peut aider a positionner des elements
-.loading {
-    // lorsqu on doit afficher le loader
+.centrerH {
     display: flex;
-    align-items: center;
     justify-content: center;
     width: 100%;
+}
+
+.centrerV {
+    display: flex;
+    align-items: center;
     height: 100%;
+}
+
+.centrer {
+    @extend .centrerH;
+    @extend .centrerV;
 }

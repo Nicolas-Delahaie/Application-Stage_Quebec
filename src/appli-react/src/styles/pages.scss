@@ -1,14 +1,9 @@
 .page {
-    min-height: 60vh;
-    margin: 10vh 0 0 0;
+    min-height: 75vh;
 }
 
 /* -------------- PAGE PROFIL -------------- */
-
 #profil {
-    display: flex;
-    flex-direction: column;
-
     .infos {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -96,7 +91,7 @@
 
     .erreur {
         grid-column: span 2;
-        color: var(--red);
+        color: var(--rouge);
         text-align: center;
     }
 
@@ -110,6 +105,11 @@
 
 /* -------------- PAGE LIBERATIONS -------------- */
 #Liberations {
+    .divErreur {
+        display: flex;
+        justify-content: center;
+    }
+
     .container {
         display: grid;
         grid-template-columns: 40% 1fr;
@@ -278,6 +278,12 @@
 
 // PAGE DETAILS SCENARIO
 #detailsScenario {
+    display: flex;
+    flex-direction: column;
+
+    #erreur {
+        align-self: center;
+    }
 
     #tableContainer {
         overflow: scroll;
@@ -294,10 +300,21 @@
             width: 1rem;
             min-width: 0;
 
+            a {
+                color: var(--blanc);
+
+                writing-mode: vertical-lr;
+                text-orientation: mixed;
+            }
+
             &:nth-child(n+6) {
                 background-color: var(--bleu-clair);
                 writing-mode: vertical-lr;
                 text-orientation: mixed;
+            }
+
+            &:nth-child(n+6) {
+                background-color: var(--bleu-clair);
             }
         }
 
@@ -305,24 +322,44 @@
             &:hover {
                 background-color: var(--jaune-tres-clair);
             }
-        }
 
-        td {
-            padding: 0;
-            width: 1rem;
-            height: 1rem;
-            min-width: 0;
-            text-align: center;
-            border: 1px solid var(--gris);
-
-            &:nth-child(-n+5) {
+            .separateur {
                 background-color: var(--gris-clair);
             }
+
+            td {
+                padding: 0;
+                width: 1rem;
+                height: 100%;
+                min-width: 0;
+                text-align: center;
+                border: 1px solid var(--gris);
+
+                &:nth-child(-n+5) {
+                    background-color: var(--gris-clair);
+                }
+
+                input {
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                    background-color: transparent;
+                    text-align: center;
+                    font-size: 1rem;
+                    font-family: var(--font-texte);
+                }
+            }
         }
+
     }
 
     .details {
         margin: 2rem 2rem;
+    }
+
+    #infos,
+    #historique {
+        padding: 0rem 2rem;
     }
 }
 
@@ -330,6 +367,9 @@
 /* -------------- DEPARTEMENTS -------------- */
 // PAGE DETAILS DEPARTEMENT
 .departement {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     .container {
         align-items: flex-start;
@@ -356,7 +396,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
 
     &>div {
         display: grid;

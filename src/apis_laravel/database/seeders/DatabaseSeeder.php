@@ -172,30 +172,30 @@ class DatabaseSeeder extends Seeder
             }
             foreach($cours_propose as $val){CoursPropose::create($val);}
 
-            $scenario = [];
+            
+            // SCENARIOS
             foreach (Departement::all() as $departement) {
-                // On attribue a chaque departement entre 1 et 4 scenarios
-                
-                $nbScenarios = $faker->numberBetween(1, 4);
-                for ($i=1; $i < $nbScenarios; $i++) {
-                    array_push($scenario, [
+                // On attribue a chaque departement un nombre de scenarios aleatoire
+                $nbSessions = $faker->numberBetween(0, 3);
+                for ($session = 0; $session < $nbSessions; $session++) {
+                    // Pour chaque session de l annee
+                    Scenario::create([
                         "aEteValide" => true,
-                        "annee" => 2022 - $i,
+                        "annee" => 2022,
+                        "session" => 3 - $session,
+                        //Pour partir de la fin de 2022
                         "departement_id" => $departement->id,
-                        "proprietaire_id" => $departement->coordonnateur_id,
                     ]);
                 }
-                
-                //On ajoute le dernier qui n est pas valide
-                array_push($scenario, [
+
+                //On ajoute la derniere session qui n est pas valide
+                Scenario::create([
                     "aEteValide" => false,
-                    "annee" => 2022,
+                    "annee" => 2023,
+                    "session" => 1,
                     "departement_id" => $departement->id,
-                    "proprietaire_id" => $departement->coordonnateur_id,
                 ]);
             }
-            foreach($scenario as $val){Scenario::create($val);}
-
 
 
             // TABLES AVEC 4 DEPENDANCES

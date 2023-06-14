@@ -48,6 +48,7 @@ function Home() {
                             <>
                                 {CarteAccueil(Repartir, "Scénarios", "/scenarios")}
                                 {CarteAccueil(Departements, "Départements", "/departements")}
+                                {CarteAccueil(Calendrier, "Libérations", "/liberations")}
                                 {CarteAccueil(Calendrier, "Profil", "/profil")}
                             </>
                         }

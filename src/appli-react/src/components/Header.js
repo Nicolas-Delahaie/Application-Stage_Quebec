@@ -16,7 +16,7 @@ function Header() {
 
     return (
         <header className={estConnecte ? "headerConnecte" : "headerDeconnecte"}>
-            <Link className="lien" to="/">
+            <Link to="/">
                 <img src="https://cstjean.omnivox.ca/Cache/AttatchWebPartNewsTemp/Prod/JEA/id-comm-v19-3c2da998-982c-4a2b-901f-94bc482f2286small.temp.jpg?i=RldsQE5kOkhfNjVZb0lXbkNQYA**" alt="logo" className="logo" />
             </Link>
 
@@ -45,11 +45,11 @@ function Header() {
             </div>
 
             {estConnecte ?
-                <button onClick={() => deconnexion()}>Se déconnecter</button>
+                <button onClick={() => deconnexion()} className="btnDroit">Se déconnecter</button>
                 :
-                <button>
-                    <Link className="lien" to="/login"> Se connecter</Link>
-                </button>
+                <Link className="lienBtn btnDroit" to="/login">
+                    Se connecter
+                </Link>
             }
         </header>
     )

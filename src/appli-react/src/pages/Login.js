@@ -109,12 +109,11 @@ function Login() {
                             onChange={(e) => setResterConnecte(e.target.checked)} />
                         <label>Rester connecté</label>
                     </div>
-                    {erreur && <p className="erreur">{erreur}</p>}
+                    {erreur && <p className="centrerH">{erreur}</p>}
                     {isConnecting &&
-                        <div className="loading">
+                        <div className="centrerH">
                             <Loader />
-                        </div>
-                    }
+                        </div>}
                     {!isConnecting && <input className="btnValider" type="submit" value="Se connecter" />}
                 </form>
             </section>

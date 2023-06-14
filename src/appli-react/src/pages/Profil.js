@@ -6,6 +6,7 @@ import { AppContext } from '../utils/context/context';
 // Composants
 import Loader from '../components/Loader';
 import TableauLiberations from "../components/TableauLiberations";
+import NomUser from "../components/NomUser";
 
 
 /* ----------------------------------- DOM ---------------------------------- */
@@ -27,7 +28,6 @@ function Profil() {
             method: "get",
         });
         setIsLoading(false);
-        console.log(rep);
 
         // -- Traitement du resultat --
         if (rep.success) {
@@ -73,20 +73,17 @@ function Profil() {
 
 
     return (
-        <div id="profil" className="page">
+        <div id="profil" className={`page ${isLoading ? "centrer" : ""}`}>
             <Toaster />
-            {erreur && <h1>{erreur}</h1>}
-            {isLoading &&
-            <div className="loading">
-            <Loader />
-            </div>}
-            {isLoading===false &&
+            {erreur && <h2>Erreur : {erreur}</h2>}
+            {isLoading && <Loader />}
+            {user &&
                 <>
                     <h1>Mon profil</h1>
                     <div className="infos">
                         <div>
                             <h2>Informations globales</h2>
-                            <p>{user.prenom} {user.nom}</p>
+                            <p><NomUser user={user} cliquable="true" /></p>
                             <p>{user.email}</p>
                             <p>{user.type.nom}</p>
                             <h2>Contraintes</h2>

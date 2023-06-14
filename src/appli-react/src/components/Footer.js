@@ -4,7 +4,10 @@
 function Footer() {
     return (
         <footer>
-            <p>Ceci est un footer où il y a des choses de footer</p>
+            <p>
+                <b>Développeurs :</b> Nicolas DELAHAIE et Oier CESAT <br />
+                <b>Contact :</b> nico601.delahaie@mail.com et oier.cesat@gmail.com
+            </p>
         </footer>
     )
 }

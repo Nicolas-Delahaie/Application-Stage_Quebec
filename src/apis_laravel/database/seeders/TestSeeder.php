@@ -77,18 +77,18 @@ class TestSeeder extends Seeder
 
             $user =[
                 
-                ["nom" => "Béland", "email" => "s.beland@gmail.com" , "password" => bcrypt("password"), "statut" => "P", "type_utilisateur_id" => 1, "departement_id" => 1],
-                ["nom" => "McGrail", "email" => "p.mcgrail@gmail.com" , "password" => bcrypt("password"), "statut" => "P", "type_utilisateur_id" => 1, "departement_id" => 1],
-                ["nom" => "Neveu", "email" => "s.neveu@gmail.com" , "password" => bcrypt("password"), "statut" => "P", "type_utilisateur_id" => 1, "departement_id" => 1],
-                ["nom" => "Trudeau", "email" => "g.trudeau@gmail.com" , "password" => bcrypt("password"), "statut" => "P", "type_utilisateur_id" => 1, "departement_id" => 1],
-                ["nom" => "Guérin", "email" => "f.guerin@gmail.com" , "password" => bcrypt("password"), "statut" => "P", "type_utilisateur_id" => 1, "departement_id" => 1],
-                ["nom" => "Bessette", "email" => "k.bessette@gmail.com" , "password" => bcrypt("password"), "statut" => "P", "type_utilisateur_id" => 1, "departement_id" => 1],
-                ["nom" => "Bouthillier", "email" => "m.bouthillier@gmail.com" , "password" => bcrypt("password"), "statut" => "TP", "type_utilisateur_id" => 1, "departement_id" => 1,"estCoordo" => true],
-                ["nom" => "Huot", "email" => "s.huot@gmail.com" , "password" => bcrypt("password"), "statut" => "TP", "type_utilisateur_id" => 1, "departement_id" => 1],
-                ["nom" => "Fortin", "email" => "o.fortin@gmail.com" , "password" => bcrypt("password"), "statut" => "TP", "type_utilisateur_id" => 1, "departement_id" => 1],
-                ["nom" => "ProfA", "email" => "p.profA@gmail.com" , "password" => bcrypt("password"), "statut" => "TP", "type_utilisateur_id" => 1, "departement_id" => 1],
-                ["nom" => "ProfB", "email" => "p.profB@gmail.com" , "password" => bcrypt("password"), "statut" => "TP", "type_utilisateur_id" => 1, "departement_id" => 1],
-                ["nom" => "Root","email" => "root@root.root","password" => bcrypt("root"), "statut" => "P", "type_utilisateur_id" => 1, "departement_id" => 1],
+                ["nom" => "Béland", "prenom"=>"sophie", "email" => "s.beland@gmail.com" , "password" => bcrypt("password"), "statut" => "P", "type_utilisateur_id" => 1, "departement_id" => 1],
+                ["nom" => "McGrail","prenom"=>"patrick", "email" => "p.mcgrail@gmail.com" , "password" => bcrypt("password"), "statut" => "P", "type_utilisateur_id" => 1, "departement_id" => 1],
+                ["nom" => "Neveu","prenom"=>"sacha", "email" => "s.neveu@gmail.com" , "password" => bcrypt("password"), "statut" => "P", "type_utilisateur_id" => 1, "departement_id" => 1],
+                ["nom" => "Trudeau","prenom"=>"gaetan", "email" => "g.trudeau@gmail.com" , "password" => bcrypt("password"), "statut" => "P", "type_utilisateur_id" => 1, "departement_id" => 1],
+                ["nom" => "Guérin","prenom"=>"frédéric", "email" => "f.guerin@gmail.com" , "password" => bcrypt("password"), "statut" => "P", "type_utilisateur_id" => 1, "departement_id" => 1],
+                ["nom" => "Bessette","prenom"=>"katia", "email" => "k.bessette@gmail.com" , "password" => bcrypt("password"), "statut" => "P", "type_utilisateur_id" => 1, "departement_id" => 1],
+                ["nom" => "Bouthillier","prenom"=>"maurice", "email" => "m.bouthillier@gmail.com" , "password" => bcrypt("password"), "statut" => "TP", "type_utilisateur_id" => 1, "departement_id" => 1,"estCoordo" => true],
+                ["nom" => "Huot","prenom"=>"sébastien", "email" => "s.huot@gmail.com" , "password" => bcrypt("password"), "statut" => "TP", "type_utilisateur_id" => 1, "departement_id" => 1],
+                ["nom" => "Fortin","prenom"=>"orélie", "email" => "o.fortin@gmail.com" , "password" => bcrypt("password"), "statut" => "TP", "type_utilisateur_id" => 1, "departement_id" => 1],
+                ["nom" => "Prof","prenom"=>"A", "email" => "p.profA@gmail.com" , "password" => bcrypt("password"), "statut" => "TP", "type_utilisateur_id" => 1, "departement_id" => 1],
+                ["nom" => "Prof","prenom"=>"B", "email" => "p.profB@gmail.com" , "password" => bcrypt("password"), "statut" => "TP", "type_utilisateur_id" => 1, "departement_id" => 1],
+                ["nom" => "Root","prenom"=>"","email" => "root@root.root","password" => bcrypt("root"), "statut" => "P", "type_utilisateur_id" => 1, "departement_id" => 1],
 
             ];
             foreach($user as $val){\App\Models\User::create($val);}
@@ -129,7 +129,7 @@ class TestSeeder extends Seeder
             foreach($coursProposes as $val){CoursPropose::create($val);}
 
             $scenario=[
-                ["aEteValide" => false, "annee" => 2023, "departement_id" => 1, "proprietaire_id" => 7]
+                ["aEteValide" => false, "annee" => 2023, "departement_id" => 1, "proprietaire_id" => 7, "session" => 1]
             ];
 
             foreach($scenario as $val){Scenario::create($val);}

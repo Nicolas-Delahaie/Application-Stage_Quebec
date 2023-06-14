@@ -61,6 +61,7 @@ return new class extends Migration
             $table->id();
             $table->boolean("aEteValide")->default(false);
             $table->unsignedSmallInteger("annee");
+            $table->unsignedTinyInteger("session");
             $table->timestamps();
             $table->unsignedBigInteger("proprietaire_id")->nullable();
             $table->unsignedBigInteger("departement_id");

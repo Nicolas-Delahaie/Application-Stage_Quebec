@@ -17,8 +17,8 @@ class Scenario extends Model
         'departement_id',
     ];
     protected $casts = [
-        'created_at' => 'datetime:d-m-Y H:i',
-        'updated_at' => 'datetime:d-m-Y H:i',
+        'created_at' => 'datetime:H:i d-m-Y ',
+        'updated_at' => 'datetime:H:i d-m-Y',
     ];
 
     public function departement()

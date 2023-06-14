@@ -43,9 +43,6 @@ class ScenarioController extends Controller
     {
         $scenario = Scenario::with(
             [
-                'proprietaire' => function ($query) {
-                    $query->select('id', 'nom', 'prenom', 'email');
-                },
                 'departement' => function ($query) {
                     $query->select('id', 'nom');
                 }
@@ -66,7 +63,7 @@ class ScenarioController extends Controller
         $scenario = Scenario::findOrFail($id);
 
         // Recuperation des modifications associees
-        $modifications = $scenario->modifications()
+        return $scenario->modifications()
             ->with([
                 'user' => function ($query) {
                     $query->select('id', 'nom', 'prenom');
@@ -74,12 +71,6 @@ class ScenarioController extends Controller
             ])
             ->select('id', 'date_modif', 'utilisateur_id')
             ->get();
-
-        foreach ($modifications as $modification) {
-            $modification->date_modif = date('d/m/Y', strtotime($modification->date_modif));
-        }
-
-        return $modifications;
     }
     /**
      * @brief Retourne la repartition d un scenario
@@ -121,19 +112,26 @@ class ScenarioController extends Controller
         return $repartition;
     }
 
-    public function showProfesseurs($id){
+    public function showProfesseurs($id)
+    {
         return Scenario::
-        with(['departement' => function($query){
-            $query->with(['professeurs' => function($query){
-                $query->with(['liberations' => function($query){
-                    $query->select('motif');
-                }])
-                ->select('id', 'nom','prenom', 'statut', 'departement_id');
-            }])
-            ->select('id', 'nom');
-        }])
-        ->where('id', $id)
-        ->select('id', 'departement_id')
-        ->get();
+            with([
+                'departement' => function ($query) {
+                    $query->with([
+                        'professeurs' => function ($query) {
+                            $query->with([
+                                'liberations' => function ($query) {
+                                    $query->select('motif');
+                                }
+                            ])
+                                ->select('id', 'nom', 'prenom', 'statut', 'departement_id');
+                        }
+                    ])
+                        ->select('id', 'nom');
+                }
+            ])
+            ->where('id', $id)
+            ->select('id', 'departement_id')
+            ->get();
     }
 }
