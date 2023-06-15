@@ -1,7 +1,3 @@
-/**
- * @warning Les required et input type=email ne fonctionne pas, on peut valider le formulaire avec des champs vides
- */
-
 // Librairies
 import { useState, useContext, useEffect } from "react"
 import { useNavigate } from "react-router-dom"

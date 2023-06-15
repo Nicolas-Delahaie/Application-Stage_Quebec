@@ -1,8 +1,10 @@
+/**@todo Gerer l'absence du type (pas censé arriver mais on doit controler)  */
+
 // Librairies
 import { useContext, useState, useEffect } from "react"
 import { AppContext } from "../utils/context/context"
 import { Link } from "react-router-dom"
-import { useNavigate } from "react-router-dom"
+import logo from "../assets/images/logo.png"
 
 /* ----------------------------------- DOM ---------------------------------- */
 
@@ -17,7 +19,7 @@ function Header() {
     return (
         <header className={estConnecte ? "headerConnecte" : "headerDeconnecte"}>
             <Link to="/">
-                <img src="https://cstjean.omnivox.ca/Cache/AttatchWebPartNewsTemp/Prod/JEA/id-comm-v19-3c2da998-982c-4a2b-901f-94bc482f2286small.temp.jpg?i=RldsQE5kOkhfNjVZb0lXbkNQYA**" alt="logo" className="logo" />
+                <img src={logo} alt=""/>
             </Link>
 
             <div>

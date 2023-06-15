@@ -5,6 +5,7 @@ import { createContext } from 'react';  //Pour generer le contexte
 import Cookies from 'js-cookie';        //Pour récupérer les cookies
 import { useState } from 'react';        //Pour utiliser les variables d'état
 import { useNavigate } from 'react-router-dom'; //Pour naviguer entre les pages
+
 /* création du contexte */
 export const AppContext = createContext();
 

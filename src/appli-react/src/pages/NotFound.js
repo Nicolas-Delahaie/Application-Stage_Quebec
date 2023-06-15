@@ -1,12 +1,8 @@
 
 function NotFound() {
     return (
-        <div className="page">
-            <h1>404</h1>
-            <div id="notFound">
-                <h2>Erreur</h2>
-                <p>Page non trouvée</p>
-            </div>
+        <div id="notFound" className="page">
+            <h2>Erreur 404 : Page introuvable</h2>
         </div>
     )
 }

@@ -15,10 +15,10 @@ class UsersTypeResponsable
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()->type->nom === 'administrateur' || $request->user()->type->nom === 'responsable') {
+        $type = $request->user()->type->nom;
+        if ($type === 'administrateur' || $type === 'responsable') {
             return $next($request);
-        }
-        else {
+        } else {
             return response(['message' => 'Vous n\'avez pas les droits pour accéder à cette ressource.'], 403);
         }
     }

@@ -1,5 +1,5 @@
 //Librairies
-import React from 'react';      //Pour utiliser les balises vides et mettre des key
+import React from 'react';      //Pour mettre des key aux balises vides 
 
 /**
  * Affiche un tableau avec les liberations triees par annee et par semestre sur une duree souhaitee
@@ -16,20 +16,37 @@ function TableauLiberation({ liberations, anneesAvant = 1, anneesApres = 1 }) {
      * @details | si c est chaque annee
      * @details * si c est chaque semestre d une annee
      */
-    const motifPersonnalise = (liberation) => {
+    const statutLiberation = (liberation) => {
+
         if (liberation.pivot.annee === null && liberation.pivot.semestre === null) {
-            return "* " + liberation.motif;
+            return "*";
         }
         else if (liberation.pivot.annee === null && liberation.pivot.semestre !== null) {
-            return "| " + liberation.motif;
+            return "|";
         }
         else if (liberation.pivot.annee !== null && liberation.pivot.semestre === null) {
-            return "- " + liberation.motif;
+            return "-";
         }
         else {
-            return "+ " + liberation.motif;
+            return "+";
         }
     }
+
+    const hoverStatutLiberation = (liberation) => {
+        switch (statutLiberation(liberation)) {
+            case "*":
+                return "Chaque semestre de chaque annee";
+            case "|":
+                return "Tous les semestres " + liberation.pivot.semestre;
+            case "-":
+                return "Toute l'annee " + liberation.pivot.annee;
+            case "+":
+                return "Uniquement au semestre" + liberation.pivot.semestre + " de l'année " + liberation.pivot.annee;
+            default:
+                console.error("Erreur hover");
+        }
+    }
+
     /**
      * Retourne les liberations d un semestre d une annee donnee
      * @param {int} annee de la liberation voulue 
@@ -75,15 +92,13 @@ function TableauLiberation({ liberations, anneesAvant = 1, anneesApres = 1 }) {
                                     // Pour chaque semestre (case)
                                     return (
                                         <td key={annee + semestre}>{
-                                        liberationsDuSemestre(annee, semestre).map((liberation) => {
-                                            // Pour chaque liberation (ligne d une case)
-                                            return <div key={liberation.id + liberation.pivot.annee + liberation.pivot.semestre}>
-                                                <div>
-                                                    {motifPersonnalise(liberation)} ({(liberation.pivot.tempsAloue * 100).toFixed(1)}%)
+                                            liberationsDuSemestre(annee, semestre).map((liberation) => {
+                                                // Pour chaque liberation (ligne d une case)
+                                                return <div title={hoverStatutLiberation(liberation)} key={liberation.id + liberation.pivot.annee + liberation.pivot.semestre}>
+                                                    {statutLiberation(liberation)} {liberation.motif} ({(liberation.pivot.tempsAloue * 100).toFixed(1)}%)
                                                 </div>
-                                            </div>
-                                        })}
-                                    </td>
+                                            })}
+                                        </td>
                                     )
                                 })
                             }

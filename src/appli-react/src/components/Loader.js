@@ -1,6 +1,3 @@
-import "../styles/composants.scss";
-/**@warning Inutile de le mettre partout puisque header l importe deja */
-
 function Loader() {
     return (
         <svg viewBox="-25 -25 100 100" id="loader">
